@@ -13,7 +13,7 @@ class SiteNavWidget extends Widget
     {
         if (Yii::$app->user->isGuest) {
             echo Nav::widget([
-                'options' => ['class' => 'navbar-nav navbar-right'],
+                'options' => ['class' => 'nav navbar-nav pull-md-right'],
                 'items' => [
                     ['label' => 'Login', 'url' => ['/site/login']],
                 ],

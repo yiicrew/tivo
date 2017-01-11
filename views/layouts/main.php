@@ -34,7 +34,7 @@ AppAsset::register($this);
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar-default navbar-fixed-top',
+            'class' => 'navbar navbar-dark navbar-fixed-top bg-inverse',
         ],
     ]);
     echo SiteNavWidget::widget();

@@ -110,4 +110,9 @@ class Movie extends ActiveRecord
     {
         return new MovieQuery(get_called_class());
     }
+
+    public function getViewUrl()
+    {
+        return '/view';
+    }
 }

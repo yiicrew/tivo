@@ -14,11 +14,9 @@ $featured = Movie::find()->featured()->all();
             <h2 class="widget__title">Featured Movies</h2>
         </div>
         <div class="widget__content">
-            <div class="card-columns">
+            <div class="movies movies--grid">
             <?php foreach ($featured as $f): ?>
-                <div class="card card-block">
                     <?= $this->render('@app/views/movie/_thumbnail', ['movie' => $f]) ?>
-                </div>
             <?php endforeach ?>
             </div>
         </div>

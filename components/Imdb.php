@@ -893,6 +893,11 @@ class IMDBClient
                 if (strtolower($size) === 'big' && strstr($match, '@._') !== false) {
                     $match = substr($match, 0, strpos($match, '@._')) . '@.jpg';
                 }
+
+                if (strtolower($size) === 'thumb' && strstr($match, '._') !== false) {
+                    $match = substr($match, 0, strpos($match, '._')) . '._V1_UX182_CR0,0,182,268_AL_.jpg';
+                }
+
                 if ($download === false) {
                     return $this->cleanString($match);
                 } else {

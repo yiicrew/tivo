@@ -1,4 +1,6 @@
-<div class="movie">
-    <img src="<?= $movie->poster ?>" class="movie__poster">
-    <h4 class="movie__title"><?= $movie->title ?></h4>
-</div>
+<a href="<?= $movie->viewUrl ?>" class="movie">
+	<div class="movie__media">
+		<img src="<?= $movie->poster ?>" class="movie__poster">
+	</div>
+	<h3 class="movie__title"><?= $movie->title ?></h3>
+</a>

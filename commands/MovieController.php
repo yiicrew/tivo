@@ -27,7 +27,8 @@ class MovieController extends Controller
             'http://www.imdb.com/title/tt0800369',
             'http://www.imdb.com/title/tt0458339',
             'http://www.imdb.com/title/tt2015381',
-            'http://www.imdb.com/title/tt1877832'
+            'http://www.imdb.com/title/tt1877832',
+            'http://www.imdb.com/title/tt1570728'
         ];
         
         foreach ($urls as $url) {
@@ -37,7 +38,7 @@ class MovieController extends Controller
             $movie->title = $m->getTitle();
             $movie->plot = $m->getPlot();
             $movie->runtime = (int) $m->getRuntime();
-            $movie->poster = $m->getPoster();
+            $movie->poster = $m->getPoster('thumb');
             $movie->status = Movie::STATUS_ACTIVE;
             
             if ($movie->save()) {

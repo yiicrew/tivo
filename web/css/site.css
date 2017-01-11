@@ -2,6 +2,7 @@ html,
 body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
+  color: #333;
 }
 
 .wrap {
@@ -119,54 +120,61 @@ a.desc:after {
   margin-bottom: 30px;
 }
 
-.timeline {
-  position: relative;
-  margin: 15px 15px 15px 0;
-  padding: 0;
-  border-bottom: 4px solid #d8d8d8;
-  list-style: none;
-  clear: both;
+/* Movie Component */
+.movie {
+  display: block;
+  background-color: #eee;
+  box-shadow: inset 0px -2px 0 0 rgba(0,0,0,0.2);
+  border-radius: 4px;
+  color: #333;
 }
 
-.timeline-touchpoint {
-  box-sizing: border-box;
-  position: absolute;
-  top: -4px;
-  width: 12px;
-  height: 12px;
-  background-color: #43bcf5;
-  border: solid 2px #ffffff;
-  border-radius: 100%;
-  opacity: 1;
+.movie:hover {
+  text-decoration: none;
+  background-color: #563d7c;
+  box-shadow: inset 0px -2px 0 0 rgba(0,0,0,1);
+  color: white;
 }
 
-.timeline-touchpoint:hover {
-  background-color: #fff;
-  border: solid 2px #43bcf5;
-  box-shadow: 0 0 0 10px rgba(52, 189, 240, 0.4);
-  cursor: pointer;
+.movie__poster {
+  max-width: 100%;
 }
 
-.timeline-origin {
-  position: absolute;
-  top: -6px;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  background-color: #4473af;
-  border: solid 2px #ffffff;
-  border-radius: 100%;
-  opacity: 1;
+.movie__title {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px;
+  text-align: center;
 }
 
-.timeline-sale {
-  position: absolute;
-  top: -8px;
-  left: 100%;
-  width: 20px;
-  height: 20px;
-  background-color: #d0021b;
-  border: solid 2px #ffffff;
-  border-radius: 100%;
-  opacity: 1;
+/* Movies */
+.movies {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.movies--grid .movie {
+  width: 15.5%;
+  height: 300px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.movies--grid .movie__media {}
+.movies--grid .movie__poster {
+  max-width: 100%;
+}
+
+.movies--grid .movie__title {
+  margin-top: auto;
+}
+
+.widget {}
+.widget__title {
+  font-size: 24px;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
 }
