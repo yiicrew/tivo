@@ -20,6 +20,7 @@ class Imdb extends Component
             'posterDirectory' => '/web/uploads/posters/',
             'cacheDirectory' => '/runtime/cache/',
         ]);
+
         return $imdb;
     }
 }
@@ -896,8 +897,8 @@ class IMDBClient
                     return $this->cleanString($match);
                 } else {
                     $local = $this->saveImage($match, $this->id);
-                    if (file_exists(dirname(__FILE__) . '/' . $local)) {
-                        return $local;
+                    if (file_exists($this->basePath . $local)) {
+                        return preg_replace('/^\/web/', '', $local);
                     } else {
                         return $match;
                     }
@@ -1178,99 +1179,55 @@ class IMDBClient
      */
     public function getAll()
     {
-        $aData = [];
-        $aData['Aka'] = ['name' => 'Also Known As',
-            'value' => $this->getAka()];
-        $aData['Akas'] = ['name' => '(all) Also Known As',
-            'value' => $this->getAkas()];
-        $aData['AspectRatio'] = ['name' => 'Aspect Ratio',
-            'value' => $this->getAspectRatio()];
-        $aData['Awards'] = ['name' => 'Awards',
-            'value' => $this->getAwards()];
-        $aData['CastLinked'] = ['name' => 'Cast',
-            'value' => $this->getCastAsUrl()];
-        $aData['Cast'] = ['name' => 'Cast',
-            'value' => $this->getCast()];
-        $aData['CastAndCharacterLinked'] = ['name' => 'Cast and Character',
-            'value' => $this->getCastAndCharacterAsUrl()];
-        $aData['CastAndCharacter'] = ['name' => 'Cast and Character',
-            'value' => $this->getCastAndCharacter()];
-        $aData['Certification'] = ['name' => 'Certification',
-            'value' => $this->getCertification()];
-        $aData['Color'] = ['name' => 'Color',
-            'value' => $this->getColor()];
-        $aData['CompanyLinked'] = ['name' => 'Company',
-            'value' => $this->getCompanyAsUrl()];
-        $aData['Company'] = ['name' => 'Company',
-            'value' => $this->getCompany()];
-        $aData['CountryLinked'] = ['name' => 'Country',
-            'value' => $this->getCountryAsUrl()];
-        $aData['Country'] = ['name' => 'Country',
-            'value' => $this->getCountry()];
-        $aData['CreatorLinked'] = ['name' => 'Creator',
-            'value' => $this->getCreatorAsUrl()];
-        $aData['Creator'] = ['name' => 'Creator',
-            'value' => $this->getCreator()];
-        $aData['DirectorLinked'] = ['name' => 'Director',
-            'value' => $this->getDirectorAsUrl()];
-        $aData['Director'] = ['name' => 'Director',
-            'value' => $this->getDirector()];
-        $aData['GenreLinked'] = ['name' => 'Genre',
-            'value' => $this->getGenreAsUrl()];
-        $aData['Genre'] = ['name' => 'Genre',
-            'value' => $this->getGenre()];
-        $aData['LanguageLinked'] = ['name' => 'Language',
-            'value' => $this->getLanguageAsUrl()];
-        $aData['Language'] = ['name' => 'Language',
-            'value' => $this->getLanguage()];
-        $aData['LocationLinked'] = ['name' => 'Location',
-            'value' => $this->getLocationAsUrl()];
-        $aData['Location'] = ['name' => 'Location',
-            'value' => $this->getLocation()];
-        $aData['MPAA'] = ['name' => 'MPAA',
-            'value' => $this->getMpaa()];
-        $aData['PlotKeywords'] = ['name' => 'Plot Keywords',
-            'value' => $this->getPlotKeywords()];
-        $aData['Plot'] = ['name' => 'Plot',
-            'value' => $this->getPlot()];
-        $aData['Poster'] = ['name' => 'Poster',
-            'value' => $this->getPoster('big')];
-        $aData['Rating'] = ['name' => 'Rating',
-            'value' => $this->getRating()];
-        $aData['ReleaseDate'] = ['name' => 'Release Date',
-            'value' => $this->getReleaseDate()];
-        $aData['IsReleased'] = ['name' => 'Is released',
-            'value' => $this->isReleased()];
-        $aData['Runtime'] = ['name' => 'Runtime',
-            'value' => $this->getRuntime()];
-        $aData['SeasonsLinked'] = ['name' => 'Seasons',
-            'value' => $this->getSeasonsAsUrl()];
-        $aData['Seasons'] = ['name' => 'Seasons',
-            'value' => $this->getSeasons()];
-        $aData['SoundMix'] = ['name' => 'Sound Mix',
-            'value' => $this->getSoundMix()];
-        $aData['Tagline'] = ['name' => 'Tagline',
-            'value' => $this->getTagline()];
-        $aData['Title'] = ['name' => 'Title',
-            'value' => $this->getTitle()];
-        $aData['TrailerLinked'] = ['name' => 'Trailer',
-            'value' => $this->getTrailerAsUrl()];
-        $aData['Url'] = ['name' => 'Url',
-            'value' => $this->getUrl()];
-        $aData['UserReview'] = ['name' => 'User Review',
-            'value' => $this->getUserReview()];
-        $aData['Votes'] = ['name' => 'Votes',
-            'value' => $this->getVotes()];
-        $aData['WriterLinked'] = ['name' => 'Writer',
-            'value' => $this->getWriterAsUrl()];
-        $aData['Writer'] = ['name' => 'Writer',
-            'value' => $this->getWriter()];
-        $aData['Year'] = ['name' => 'Year',
-            'value' => $this->getYear()];
+        $data = [];
+        $data['Aka'] = ['name' => 'Also Known As', 'value' => $this->getAka()];
+        $data['Akas'] = ['name' => '(all) Also Known As', 'value' => $this->getAkas()];
+        $data['AspectRatio'] = ['name' => 'Aspect Ratio', 'value' => $this->getAspectRatio()];
+        $data['Awards'] = ['name' => 'Awards', 'value' => $this->getAwards()];
+        $data['CastLinked'] = ['name' => 'Cast', 'value' => $this->getCastAsUrl()];
+        $data['Cast'] = ['name' => 'Cast', 'value' => $this->getCast()];
+        $data['CastAndCharacterLinked'] = ['name' => 'Cast and Character', 'value' => $this->getCastAndCharacterAsUrl()];
+        $data['CastAndCharacter'] = ['name' => 'Cast and Character', 'value' => $this->getCastAndCharacter()];
+        $data['Certification'] = ['name' => 'Certification', 'value' => $this->getCertification()];
+        $data['Color'] = ['name' => 'Color', 'value' => $this->getColor()];
+        $data['CompanyLinked'] = ['name' => 'Company', 'value' => $this->getCompanyAsUrl()];
+        $data['Company'] = ['name' => 'Company', 'value' => $this->getCompany()];
+        $data['CountryLinked'] = ['name' => 'Country', 'value' => $this->getCountryAsUrl()];
+        $data['Country'] = ['name' => 'Country', 'value' => $this->getCountry()];
+        $data['CreatorLinked'] = ['name' => 'Creator', 'value' => $this->getCreatorAsUrl()];
+        $data['Creator'] = ['name' => 'Creator', 'value' => $this->getCreator()];
+        $data['DirectorLinked'] = ['name' => 'Director', 'value' => $this->getDirectorAsUrl()];
+        $data['Director'] = ['name' => 'Director', 'value' => $this->getDirector()];
+        $data['GenreLinked'] = ['name' => 'Genre', 'value' => $this->getGenreAsUrl()];
+        $data['Genre'] = ['name' => 'Genre', 'value' => $this->getGenre()];
+        $data['LanguageLinked'] = ['name' => 'Language', 'value' => $this->getLanguageAsUrl()];
+        $data['Language'] = ['name' => 'Language', 'value' => $this->getLanguage()];
+        $data['LocationLinked'] = ['name' => 'Location', 'value' => $this->getLocationAsUrl()];
+        $data['Location'] = ['name' => 'Location', 'value' => $this->getLocation()];
+        $data['MPAA'] = ['name' => 'MPAA', 'value' => $this->getMpaa()];
+        $data['PlotKeywords'] = ['name' => 'Plot Keywords', 'value' => $this->getPlotKeywords()];
+        $data['Plot'] = ['name' => 'Plot', 'value' => $this->getPlot()];
+        $data['Poster'] = ['name' => 'Poster', 'value' => $this->getPoster('big')];
+        $data['Rating'] = ['name' => 'Rating', 'value' => $this->getRating()];
+        $data['ReleaseDate'] = ['name' => 'Release Date', 'value' => $this->getReleaseDate()];
+        $data['IsReleased'] = ['name' => 'Is released', 'value' => $this->isReleased()];
+        $data['Runtime'] = ['name' => 'Runtime', 'value' => $this->getRuntime()];
+        $data['SeasonsLinked'] = ['name' => 'Seasons', 'value' => $this->getSeasonsAsUrl()];
+        $data['Seasons'] = ['name' => 'Seasons', 'value' => $this->getSeasons()];
+        $data['SoundMix'] = ['name' => 'Sound Mix', 'value' => $this->getSoundMix()];
+        $data['Tagline'] = ['name' => 'Tagline', 'value' => $this->getTagline()];
+        $data['Title'] = ['name' => 'Title', 'value' => $this->getTitle()];
+        $data['TrailerLinked'] = ['name' => 'Trailer', 'value' => $this->getTrailerAsUrl()];
+        $data['Url'] = ['name' => 'Url', 'value' => $this->getUrl()];
+        $data['UserReview'] = ['name' => 'User Review', 'value' => $this->getUserReview()];
+        $data['Votes'] = ['name' => 'Votes', 'value' => $this->getVotes()];
+        $data['WriterLinked'] = ['name' => 'Writer', 'value' => $this->getWriterAsUrl()];
+        $data['Writer'] = ['name' => 'Writer', 'value' => $this->getWriter()];
+        $data['Year'] = ['name' => 'Year', 'value' => $this->getYear()];
 
-        array_multisort($aData);
+        array_multisort($data);
 
-        return $aData;
+        return $data;
     }
 
     /**
@@ -1450,7 +1407,7 @@ class IMDBClient
         }
 
         $posterDir = $this->basePath . $this->posterDirectory;
-        $filename =  $posterDir . $id . '.jpg';
+        $filename = $posterDir . $id . '.jpg';
         if (file_exists($filename)) {
             return $this->posterDirectory . $id . '.jpg';
         }
