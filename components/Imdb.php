@@ -16,7 +16,9 @@ class Imdb extends Component
     public function getMovie($url)
     {
         $imdb = new IMDBClient($url, [
-            'basePath' => Yii::$app->basePath . '/runtime'
+            'basePath' => Yii::$app->basePath,
+            'posterDirectory' => '/web/uploads/posters/',
+            'cacheDirectory' => '/runtime/cache/',
         ]);
         return $imdb;
     }
@@ -59,6 +61,10 @@ class IMDBClient
      * @var null|string The basePath of the script.
      */
     private $basePath = null;
+
+    private $posterDirectory = "/posters/";
+
+    private $cacheDirectory = "/cache/";
 
     /**
      * @var null|string Holds the source.
@@ -158,12 +164,22 @@ class IMDBClient
             $this->basePath = dirname(__FILE__);
         }
 
-        if (!is_writable($this->basePath . '/posters') && !mkdir($this->basePath . '/posters')) {
-            throw new Exception('The directory “' . $this->basePath . '/posters” isn’t writable.');
+        if (isset($opts['posterDirectory'])) {
+            $this->posterDirectory = $opts['posterDirectory'];
         }
 
-        if (!is_writable($this->basePath . '/cache') && !mkdir($this->basePath . '/cache')) {
-            throw new Exception('The directory “' . $this->basePath . '/cache” isn’t writable.');
+        if (isset($opts['cacheDirectory'])) {
+            $this->cacheDirectory = $opts['cacheDirectory'];
+        }
+
+        $posterDir = $this->basePath . $this->posterDirectory;
+        if (!is_writable($posterDir) && !mkdir($posterDir)) {
+            throw new Exception($posterDir . " isn't writable.");
+        }
+
+        $cacheDir = $this->basePath . $this->cacheDirectory;
+        if (!is_writable($cacheDir) && !mkdir($cacheDir)) {
+            throw new Exception($cacheDir . " isn't writable.");
         }
 
         if (!function_exists('curl_init')) {
@@ -199,6 +215,7 @@ class IMDBClient
     private function fetchUrl($query)
     {
         $query = trim($query);
+        $cacheDir = $this->basePath . $this->cacheDirectory;
 
         // Try to find a valid URL.
         $id = $this->matchRegex($query, static::IMDB_ID, 1);
@@ -228,7 +245,7 @@ class IMDBClient
             $isSearch = true;
 
             // Was this search already performed and cached?
-            $redirectFile = $this->basePath . '/cache/' . md5($this->url) . '.redir';
+            $redirectFile = $cacheDir . md5($this->url) . '.redir';
             if (is_readable($redirectFile)) {
                 if ($this->debug) {
                     echo '<pre><b>Using redirect:</b> ' . basename($redirectFile) . '</pre>';
@@ -241,7 +258,7 @@ class IMDBClient
         }
 
         // Does a cache of this movie exist?
-        $cacheFile = $this->basePath . '/cache/' . md5($this->id) . '.cache';
+        $cacheFile = $cacheDir . md5($this->id) . '.cache';
         if (is_readable($cacheFile)) {
             $iDiff = round(abs(time() - filemtime($cacheFile)) / 60);
             if ($iDiff < $this->cacheTimeout) {
@@ -280,7 +297,7 @@ class IMDBClient
             }
             file_put_contents($redirectFile, $url);
             $this->source = null;
-            static::fetchUrl($url);
+            $this->fetchUrl($url);
 
             return true;
         }
@@ -331,7 +348,8 @@ class IMDBClient
     {
         if (true === $this->isReady) {
             // Does a cache of this movie exist?
-            $cacheFile = $this->basePath . '/cache/' . md5($this->id) . '_akas.cache';
+            $cacheDir = $this->basePath . $this->cacheDirectory;
+            $cacheFile = $cacheDir . md5($this->id) . '_akas.cache';
             $bUseCache = false;
 
             if (is_readable($cacheFile)) {
@@ -1428,24 +1446,25 @@ class IMDBClient
     public function saveImage($url, $id)
     {
         if (preg_match('~title_addposter.jpg|imdb-share-logo.png~', $url)) {
-            return 'posters/not-found.jpg';
+            return $this->posterDirectory . 'not-found.jpg';
         }
 
-        $filename = dirname(__FILE__) . '/posters/' . $id . '.jpg';
+        $posterDir = $this->basePath . $this->posterDirectory;
+        $filename =  $posterDir . $id . '.jpg';
         if (file_exists($filename)) {
-            return 'posters/' . $id . '.jpg';
+            return $this->posterDirectory . $id . '.jpg';
         }
 
-        $curlInfo = static::runCurl($url, true);
+        $curlInfo = $this->runCurl($url, true);
         $data = $curlInfo['contents'];
         if ($data === false) {
-            return 'posters/not-found.jpg';
+            return $this->posterDirectory . 'not-found.jpg';
         }
 
         $file = fopen($filename, 'x');
         fwrite($file, $data);
         fclose($file);
 
-        return 'posters/' . $id . '.jpg';
+        return $this->posterDirectory . $id . '.jpg';
     }
 }
