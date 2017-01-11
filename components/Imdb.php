@@ -2,8 +2,9 @@
 
 namespace app\components;
 
-use yii\base\Component;
+use Yii;
 use \Exception;
+use yii\base\Component;
 
 class Imdb extends Component
 {
@@ -14,7 +15,10 @@ class Imdb extends Component
 
     public function getMovie($url)
     {
-        return new IMDBClient($url);
+        $imdb = new IMDBClient($url, [
+            'basePath' => Yii::$app->basePath . '/runtime'
+        ]);
+        return $imdb;
     }
 }
 
@@ -52,9 +56,9 @@ class IMDBClient
     private $cacheTimeout = 1440;
 
     /**
-     * @var null|string The root of the script.
+     * @var null|string The basePath of the script.
      */
-    private $root = null;
+    private $basePath = null;
 
     /**
      * @var null|string Holds the source.
@@ -144,16 +148,22 @@ class IMDBClient
      *
      * @throws \Exception
      */
-    public function __construct($search, $cacheTimeout = null, $query = 'all')
+    public function __construct($search, $opts)
     {
-        $this->root = dirname(__FILE__);
+        $query = isset($opts['query']) ? $opts['query'] : 'all';
 
-        if (!is_writable($this->root . '/posters') && !mkdir($this->root . '/posters')) {
-            throw new Exception('The directory “' . $this->root . '/posters” isn’t writable.');
+        if (isset($opts['basePath'])) {
+            $this->basePath = $opts['basePath'];
+        } else {
+            $this->basePath = dirname(__FILE__);
         }
 
-        if (!is_writable($this->root . '/cache') && !mkdir($this->root . '/cache')) {
-            throw new Exception('The directory “' . $this->root . '/cache” isn’t writable.');
+        if (!is_writable($this->basePath . '/posters') && !mkdir($this->basePath . '/posters')) {
+            throw new Exception('The directory “' . $this->basePath . '/posters” isn’t writable.');
+        }
+
+        if (!is_writable($this->basePath . '/cache') && !mkdir($this->basePath . '/cache')) {
+            throw new Exception('The directory “' . $this->basePath . '/cache” isn’t writable.');
         }
 
         if (!function_exists('curl_init')) {
@@ -169,11 +179,16 @@ class IMDBClient
             echo '<pre><b>Running:</b> fetchUrl("' . $search . '")</pre>';
         }
 
-        if (null !== $cacheTimeout && (int) $cacheTimeout > 0) {
-            $this->cacheTimeout = (int) $cacheTimeout;
+        if (isset($opts['cacheTimeout']) && (int) $opts['cacheTimeout'] > 0) {
+            $this->cacheTimeout = (int) $opts['cacheTimeout'];
         }
 
         $this->fetchUrl($search);
+    }
+
+    public function setBasePath($path)
+    {
+        $this->basePath = $path;
     }
 
     /**
@@ -181,59 +196,59 @@ class IMDBClient
      *
      * @return bool True on success, false on failure.
      */
-    private function fetchUrl($search)
+    private function fetchUrl($query)
     {
-        $search = trim($search);
+        $query = trim($query);
 
         // Try to find a valid URL.
-        $sId = $this->matchRegex($search, static::IMDB_ID, 1);
-        if (false !== $sId) {
-            $this->id = preg_replace('~[\D]~', '', $sId);
+        $id = $this->matchRegex($query, static::IMDB_ID, 1);
+        if ($id !== false) {
+            $this->id = preg_replace('~[\D]~', '', $id);
             $this->url = 'http://www.imdb.com/title/tt' . $this->id . '/combined';
-            $bSearch = false;
+            $isSearch = false;
         } else {
-            switch (strtolower($this->searchFor)) {
+            switch (strtolower($this->query)) {
                 case 'movie':
-                    $sParameters = '&s=tt&ttype=ft';
+                    $params = '&s=tt&ttype=ft';
                     break;
                 case 'tv':
-                    $sParameters = '&s=tt&ttype=tv';
+                    $params = '&s=tt&ttype=tv';
                     break;
                 case 'episode':
-                    $sParameters = '&s=tt&ttype=ep';
+                    $params = '&s=tt&ttype=ep';
                     break;
                 case 'game':
-                    $sParameters = '&s=tt&ttype=vg';
+                    $params = '&s=tt&ttype=vg';
                     break;
                 default:
-                    $sParameters = '&s=tt';
+                    $params = '&s=tt';
             }
 
-            $this->url = 'http://www.imdb.com/find?q=' . str_replace(' ', '+', $search) . $sParameters;
-            $bSearch = true;
+            $this->url = 'http://www.imdb.com/find?q=' . str_replace(' ', '+', $query) . $params;
+            $isSearch = true;
 
             // Was this search already performed and cached?
-            $sRedirectFile = $this->root . '/cache/' . md5($this->url) . '.redir';
-            if (is_readable($sRedirectFile)) {
+            $redirectFile = $this->basePath . '/cache/' . md5($this->url) . '.redir';
+            if (is_readable($redirectFile)) {
                 if ($this->debug) {
-                    echo '<pre><b>Using redirect:</b> ' . basename($sRedirectFile) . '</pre>';
+                    echo '<pre><b>Using redirect:</b> ' . basename($redirectFile) . '</pre>';
                 }
-                $sRedirect = file_get_contents($sRedirectFile);
-                $this->url = trim($sRedirect);
-                $this->id = preg_replace('~[\D]~', '', $this->matchRegex($sRedirect, static::IMDB_ID, 1));
-                $bSearch = false;
+                $redirect = file_get_contents($redirectFile);
+                $this->url = trim($redirect);
+                $this->id = preg_replace('~[\D]~', '', $this->matchRegex($redirect, static::IMDB_ID, 1));
+                $isSearch = false;
             }
         }
 
         // Does a cache of this movie exist?
-        $sCacheFile = $this->root . '/cache/' . md5($this->id) . '.cache';
-        if (is_readable($sCacheFile)) {
-            $iDiff = round(abs(time() - filemtime($sCacheFile)) / 60);
+        $cacheFile = $this->basePath . '/cache/' . md5($this->id) . '.cache';
+        if (is_readable($cacheFile)) {
+            $iDiff = round(abs(time() - filemtime($cacheFile)) / 60);
             if ($iDiff < $this->cacheTimeout) {
-                if (true === $this->debug) {
-                    echo '<pre><b>Using cache:</b> ' . basename($sCacheFile) . '</pre>';
+                if ($this->debug === true) {
+                    echo '<pre><b>Using cache:</b> ' . basename($cacheFile) . '</pre>';
                 }
-                $this->source = file_get_contents($sCacheFile);
+                $this->source = file_get_contents($cacheFile);
                 $this->isReady = true;
 
                 return true;
@@ -241,15 +256,15 @@ class IMDBClient
         }
 
         // Run cURL on the URL.
-        if (true === $this->debug) {
+        if ($this->debug === true) {
             echo '<pre><b>Running cURL:</b> ' . $this->url . '</pre>';
         }
 
         $curlInfo = $this->runCurl($this->url);
         $source = $curlInfo['contents'];
 
-        if (false === $source) {
-            if (true === $this->debug) {
+        if ($source === false) {
+            if ($this->debug === true) {
                 echo '<pre><b>cURL error:</b> ' . var_dump($curlInfo) . '</pre>';
             }
 
@@ -258,37 +273,35 @@ class IMDBClient
 
         // Was the movie found?
         $match = $this->matchRegex($source, static::IMDB_SEARCH, 1);
-        if (false !== $match) {
+        if ($match !== false) {
             $url = 'http://www.imdb.com/title/' . $match . '/combined';
-            if (true === $this->debug) {
-                echo '<pre><b>New redirect saved:</b> ' . basename($sRedirectFile) . ' => ' . $url . '</pre>';
+            if ($this->debug === true) {
+                echo '<pre><b>New redirect saved:</b> ' . basename($redirectFile) . ' => ' . $url . '</pre>';
             }
-            file_put_contents($sRedirectFile, $url);
+            file_put_contents($redirectFile, $url);
             $this->source = null;
             static::fetchUrl($url);
 
             return true;
         }
         $match = $this->matchRegex($source, static::IMDB_NOT_FOUND, 0);
-        if (false !== $match) {
+        if ($match !== false) {
             if (true === $this->debug) {
-                echo '<pre><b>Movie not found:</b> ' . $search . '</pre>';
+                echo '<pre><b>Movie not found:</b> ' . $query . '</pre>';
             }
 
             return false;
         }
 
-        $this->source = str_replace(["\n",
-            "\r\n",
-            "\r"], '', $source);
+        $this->source = str_replace(["\n", "\r\n", "\r"], '', $source);
         $this->isReady = true;
 
         // Save cache.
-        if (false === $bSearch) {
-            if (true === $this->debug) {
-                echo '<pre><b>Cache created:</b> ' . basename($sCacheFile) . '</pre>';
+        if ($isSearch === false) {
+            if ($this->debug === true) {
+                echo '<pre><b>Cache created:</b> ' . basename($cacheFile) . '</pre>';
             }
-            file_put_contents($sCacheFile, $this->source);
+            file_put_contents($cacheFile, $this->source);
         }
 
         return true;
@@ -318,18 +331,18 @@ class IMDBClient
     {
         if (true === $this->isReady) {
             // Does a cache of this movie exist?
-            $sCacheFile = $this->root . '/cache/' . md5($this->id) . '_akas.cache';
+            $cacheFile = $this->basePath . '/cache/' . md5($this->id) . '_akas.cache';
             $bUseCache = false;
 
-            if (is_readable($sCacheFile)) {
-                $iDiff = round(abs(time() - filemtime($sCacheFile)) / 60);
+            if (is_readable($cacheFile)) {
+                $iDiff = round(abs(time() - filemtime($cacheFile)) / 60);
                 if ($iDiff < $this->cacheTimeout || false) {
                     $bUseCache = true;
                 }
             }
 
             if ($bUseCache) {
-                $aRawReturn = file_get_contents($sCacheFile);
+                $aRawReturn = file_get_contents($cacheFile);
                 $result = unserialize($aRawReturn);
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -357,7 +370,7 @@ class IMDBClient
                         }
                     }
 
-                    file_put_contents($sCacheFile, serialize($result));
+                    file_put_contents($cacheFile, serialize($result));
 
                     return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
                 }
@@ -848,25 +861,25 @@ class IMDBClient
     }
 
     /**
-     * @param string $sSize     Small or big poster?
-     * @param bool   $bDownload Return URL to the poster or download it?
+     * @param string $size     Small or big poster?
+     * @param bool   $download Return URL to the poster or download it?
      *
      * @return bool|string Path to the poster.
      */
-    public function getPoster($sSize = 'small', $bDownload = false)
+    public function getPoster($size = 'small', $download = true)
     {
-        if (true === $this->isReady) {
+        if ($this->isReady === true) {
             $match = $this->matchRegex($this->source, static::IMDB_POSTER, 1);
-            if (false !== $match) {
-                if ('big' === strtolower($sSize) && false !== strstr($match, '@._')) {
+            if ($match !== false) {
+                if (strtolower($size) === 'big' && strstr($match, '@._') !== false) {
                     $match = substr($match, 0, strpos($match, '@._')) . '@.jpg';
                 }
-                if (false === $bDownload) {
+                if ($download === false) {
                     return $this->cleanString($match);
                 } else {
-                    $sLocal = $this->saveImage($match, $this->id);
-                    if (file_exists(dirname(__FILE__) . '/' . $sLocal)) {
-                        return $sLocal;
+                    $local = $this->saveImage($match, $this->id);
+                    if (file_exists(dirname(__FILE__) . '/' . $local)) {
+                        return $local;
                     } else {
                         return $match;
                     }
@@ -1366,20 +1379,20 @@ class IMDBClient
 
     /**
      * @param string $url      The URL to fetch.
-     * @param bool   $bDownload Download?
+     * @param bool   $download Download?
      *
      * @return bool|mixed Array on success, false on failure.
      */
-    public function runCurl($url, $bDownload = false)
+    public function runCurl($url, $download = false)
     {
         $curl = curl_init($url);
         curl_setopt_array($curl, [
-            CURLOPT_BINARYTRANSFER => ($bDownload ? true : false),
+            CURLOPT_BINARYTRANSFER => ($download ? true : false),
             CURLOPT_CONNECTTIMEOUT => $this->requestTimeout,
             CURLOPT_ENCODING => '',
             CURLOPT_FOLLOWLOCATION => false,
             CURLOPT_FRESH_CONNECT => true,
-            CURLOPT_HEADER => ($bDownload ? false : true),
+            CURLOPT_HEADER => ($download ? false : true),
             CURLOPT_HTTPHEADER => [
                 'Accept-Language:' . $this->language,
                 'Accept-Charset:' . 'utf-8, iso-8859-1;q=0.8',
