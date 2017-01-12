@@ -103,6 +103,11 @@ class Movie extends ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
+    public function getGenre()
+    {
+        return 'Darama';
+    }
+
     /**
      * @inheritdoc
      * @return MovieQuery the active query used by this AR class.

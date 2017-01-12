@@ -4,7 +4,7 @@
 /* @var $content string */
 
 use yii\helpers\Html;
-use app\widgets\SiteNavbarWidget;
+use app\widgets\SiteNavbar;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
@@ -29,7 +29,7 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?= SiteNavbarWidget::widget() ?>
+    <?= SiteNavbar::widget() ?>
     <?= $content ?>
 </div>
 

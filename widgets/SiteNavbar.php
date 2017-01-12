@@ -8,7 +8,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 
-class SiteNavbarWidget extends Widget
+class SiteNavbar extends Widget
 {
     public function run()
     {
