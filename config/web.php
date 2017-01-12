@@ -16,8 +16,7 @@ $config = [
             'class' => 'app\components\Formatter'
         ],
         'cache' => [
-            'class' => 'yii\redis\Cache',
-            'redis' => 'redis',
+            'class' => 'yii\caching\FileCache',
         ],
         'user' => [
             'identityClass' => 'app\models\User',
@@ -43,20 +42,23 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-        'cassandra' => [
+/*        'cassandra' => [
             'class' => '\beliy\cassandra\Connection',
             'keyspace' => '',
             'servers' => ['127.0.0.1:9042'],
-        ],
-        'redis' => [
+        ],*/
+/*        'redis' => [
             'class' => 'yii\redis\Connection',
             'hostname' => '127.0.0.1',
             'port' => 6379,
-        ],
+        ],*/
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'showScriptName' => false,
+            'showScriptName' => true,
+            'suffix' => '.html',
             'rules' => [
+                'watch/<title>' => 'movie/view',
+                '<controller>/<action>' => '<controller>/<action>',
             ],
         ],
         

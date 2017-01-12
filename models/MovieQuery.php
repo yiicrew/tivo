@@ -34,6 +34,16 @@ class MovieQuery extends \yii\db\ActiveQuery
 
     public function featured()
     {
-        return $this;
+        return $this->limit(12);
+    }
+
+    public function mostRated()
+    {
+        return $this->offset(12)->limit(12);
+    }
+
+    public function mostPopular()
+    {
+        return $this->offset(24)->limit(12);
     }
 }

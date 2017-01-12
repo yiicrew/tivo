@@ -7,18 +7,22 @@ use app\models\Movie;
 $this->title = Yii::$app->params['appName'];
 
 $featured = Movie::find()->featured()->all();
+$mostRated = Movie::find()->mostRated()->all();
+$mostPopular = Movie::find()->mostPopular()->all();
 ?>
 <div class="site-index">
-    <div class="widget">
-        <div class="widget__header">
-            <h2 class="widget__title">Featured Movies</h2>
-        </div>
-        <div class="widget__content">
-            <div class="movies movies--grid">
-            <?php foreach ($featured as $f): ?>
-                    <?= $this->render('@app/views/movie/_thumbnail', ['movie' => $f]) ?>
-            <?php endforeach ?>
-            </div>
-        </div>
-    </div>
+    <?= $this->render('@app/views/shared/_widget', [
+        'title' => 'Featured Movies',
+        'movies' => $featured
+    ]) ?>
+
+    <?= $this->render('@app/views/shared/_widget', [
+        'title' => 'Most Rated',
+        'movies' => $mostRated
+    ]) ?>
+
+    <?= $this->render('@app/views/shared/_widget', [
+        'title' => 'Most Popular',
+        'movies' => $mostPopular
+    ]) ?>
 </div>

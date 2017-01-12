@@ -8,10 +8,12 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Movie;
 
-class SiteController extends Controller
+class MovieController extends Controller
 {
-    public $layout = 'column1';
+    public $layout = 'main';
+
     /**
      * @inheritdoc
      */
@@ -62,6 +64,16 @@ class SiteController extends Controller
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+
+    public function actionView($title)
+    {
+        $id = preg_match('/(\d+)$/', $title);
+        $movie = Movie::findOne($id);
+        return $this->render('view', [
+            'movie' => $movie,
+        ]);
     }
 
     /**

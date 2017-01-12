@@ -4,10 +4,7 @@
 /* @var $content string */
 
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
-use app\widgets\SiteNavWidget;
+use app\widgets\SiteNavbarWidget;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
@@ -18,8 +15,11 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/tooltipster/css/tooltipster.bundle.min.css" />
+
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
@@ -29,24 +29,8 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar navbar-dark navbar-fixed-top bg-inverse',
-        ],
-    ]);
-    echo SiteNavWidget::widget();
-    NavBar::end();
-    ?>
-
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= $content ?>
-    </div>
+    <?= SiteNavbarWidget::widget() ?>
+    <?= $content ?>
 </div>
 
 <footer class="footer">

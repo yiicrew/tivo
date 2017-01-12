@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "movies".
@@ -113,6 +114,7 @@ class Movie extends ActiveRecord
 
     public function getViewUrl()
     {
-        return '/view';
+        $title = Inflector::slug($this->title . '-' . $this->id);
+        return Yii::$app->urlManager->createUrl(['movie/view', 'title' => $title]);
     }
 }

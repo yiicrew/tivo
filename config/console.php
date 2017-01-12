@@ -17,7 +17,6 @@ $config = [
     'components' => [
         'cache' => [
             'class' => 'yii\redis\Cache',
-            'redis' => 'redis',
         ],
         'imdb' => [
             'class' => 'app\components\Imdb',
@@ -31,20 +30,17 @@ $config = [
             ],
         ],
         'db' => $db,
-        'redis' => [
-            'class' => 'yii\redis\Connection',
-            'hostname' => 'localhost',
-            'port' => 6379,
-        ],
+
     ],
     'params' => $params,
     /*
-'controllerMap' => [
-'fixture' => [ // Fixture generation command line.
-'class' => 'yii\faker\FixtureController',
-],
-],
- */
+    'controllerMap' => [
+        // Fixture generation command line.
+        'fixture' => [
+            'class' => 'yii\faker\FixtureController',
+        ],
+    ],
+    */
 ];
 
 if (YII_ENV_DEV) {
