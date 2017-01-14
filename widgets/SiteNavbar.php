@@ -26,7 +26,17 @@ class SiteNavbar extends Widget
     public function siteNav()
     {
         $items = [];
-        if (Yii::$app->user->isGuest) {
+        $items[] = ['label' => 'Home', 'url' => ['/site/index']];
+        $items[] = ['label' => 'Genre', 'url' => ['/movies/genre']];
+        $items[] = ['label' => 'Country', 'url' => ['/movies/country']];
+        $items[] = ['label' => 'Year', 'url' => ['/movies/country']];
+        $items[] = ['label' => 'TV-Shows', 'url' => ['/show/index']];
+        $items[] = ['label' => 'Latest', 'url' => ['/show/index']];
+        $items[] = ['label' => 'Comming Soon', 'url' => ['/show/index']];
+        $items[] = ['label' => 'New Request', 'url' => ['/show/index']];
+
+
+        /*if (Yii::$app->user->isGuest) {
             $items[] = ['label' => 'Login', 'url' => ['/site/login']];
         } else {
             $items[] = '<li>'
@@ -34,7 +44,16 @@ class SiteNavbar extends Widget
                     . Html::submitButton('Logout', ['class' => 'btn btn-link logout'])
                     . Html::endForm()
                     . '</li>';
-        }
+        }*/
+
+        $items[] = '<li class="nav-item">'
+                    . Html::beginForm(['/site/logout'], 'post')
+                    . '<div class="form-group form-inline" style="margin:0;">'
+                    . Html::textInput('q', '', ['class' => 'form-control'])
+                    . Html::submitButton('Search', ['class' => 'btn btn-primary'])
+                    . Html::endForm()
+                    . '</div>'
+                    . '</li>';
 
         echo Nav::widget([
             'options' => ['class' => 'nav navbar-nav pull-md-right'],
