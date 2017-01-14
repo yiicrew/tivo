@@ -108,3 +108,35 @@ $this->title = $movie->title;
         </div>
     </div>
 </div>
+
+<div class="comments comments--facebook">
+    <div class="fb-comments"
+         data-href="http://123movies.to/film/my-mother-and-other-strangers-season-1-17788/watching.html"
+         data-width="100%"
+         data-numposts="5">
+    </div>
+</div>
+
+
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '727243164041505',
+            cookie: true,  // enable cookies to allow the server to access
+                           // the session
+            xfbml: true,  // parse social plugins on this page
+            version: 'v2.6' // use graph api version 2.6
+        });
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
