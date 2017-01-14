@@ -8,8 +8,8 @@ use yii\base\Component;
 
 class Imdb extends Component
 {
-    public $posterPath = "";
-    public $cachePath = "";
+    public $posterPath = '';
+    public $cachePath = '';
 
     private $_imdb = null;
 
@@ -461,11 +461,11 @@ class IMDBClient
     /**
      * @param int    $limit  How many cast members should be returned?
      * @param bool   $bMore   Add … if there are more cast members than printed.
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with linked cast members or $notFound.
      */
-    public function getCastAsUrl($limit = 0, $bMore = true, $sTarget = '')
+    public function getCastAsUrl($limit = 0, $bMore = true, $target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_CAST);
@@ -474,7 +474,7 @@ class IMDBClient
                     if (0 !== $limit && $i >= $limit) {
                         break;
                     }
-                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 $more = ($bMore && (count($match[2]) > $limit));
@@ -519,12 +519,12 @@ class IMDBClient
      * @param int    $limit  How many cast members should be returned?
      * @param bool   $bMore   Add … if there are more cast members than
      *                        printed.
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with linked cast members and their character or
      *                $notFound.
      */
-    public function getCastAndCharacterAsUrl($limit = 0, $bMore = true, $sTarget = '')
+    public function getCastAndCharacterAsUrl($limit = 0, $bMore = true, $target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_CAST);
@@ -534,7 +534,7 @@ class IMDBClient
                     if (0 !== $limit && $i >= $limit) {
                         break;
                     }
-                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a> as ' . $this->cleanString($matchChar[1][$i]);
+                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a> as ' . $this->cleanString($matchChar[1][$i]);
                 }
 
                 $more = ($bMore && (count($match[2]) > $limit));
@@ -592,16 +592,16 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string The linked company producing the movie or $notFound.
      */
-    public function getCompanyAsUrl($sTarget = '')
+    public function getCompanyAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_COMPANY);
             if (isset($match[2][0])) {
-                return '<a href="http://www.imdb.com/company/' . $this->cleanString($match[1][0]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($match[2][0]) . '</a>';
+                return '<a href="http://www.imdb.com/company/' . $this->cleanString($match[1][0]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($match[2][0]) . '</a>';
             }
         }
 
@@ -624,17 +624,17 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with linked countries or $notFound.
      */
-    public function getCountryAsUrl($sTarget = '')
+    public function getCountryAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_COUNTRY);
             if (count($match[2])) {
                 foreach ($match[2] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/country/' . trim($match[1][$i]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/country/' . trim($match[1][$i]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -660,18 +660,18 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with the linked creators or $notFound.
      */
-    public function getCreatorAsUrl($sTarget = '')
+    public function getCreatorAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_CREATOR, 1);
             $match = $this->matchRegex($match, static::IMDB_NAME);
             if (count($match[2])) {
                 foreach ($match[2] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -697,18 +697,18 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with the linked directors or $notFound.
      */
-    public function getDirectorAsUrl($sTarget = '')
+    public function getDirectorAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_DIRECTOR, 1);
             $match = $this->matchRegex($match, static::IMDB_NAME);
             if (count($match[2])) {
                 foreach ($match[2] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -734,17 +734,17 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with the linked genres or $notFound.
      */
-    public function getGenreAsUrl($sTarget = '')
+    public function getGenreAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_GENRE);
             if (count($match[2])) {
                 foreach ($match[2] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/Sections/Genres/' . $this->cleanString($match[1][$i]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/Sections/Genres/' . $this->cleanString($match[1][$i]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -770,17 +770,17 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with the linked languages or $notFound.
      */
-    public function getLanguageAsUrl($sTarget = '')
+    public function getLanguageAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_LANGUAGE);
             if (count($match[2])) {
                 foreach ($match[2] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/language/' . $this->cleanString($match[1][$i]) . '"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/language/' . $this->cleanString($match[1][$i]) . '"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -806,17 +806,17 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with the linked location or $notFound.
      */
-    public function getLocationAsUrl($sTarget = '')
+    public function getLocationAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_LOCATION);
             if (count($match[2])) {
                 foreach ($match[2] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/search/title?locations=' . $this->cleanString($match[1][$i]) . '"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/search/title?locations=' . $this->cleanString($match[1][$i]) . '"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -991,17 +991,17 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with the linked seasons or $notFound.
      */
-    public function getSeasonsAsUrl($sTarget = '')
+    public function getSeasonsAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_SEASONS);
             if (count($match[1])) {
                 foreach ($match[1] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/title/tt' . $this->id . '/episodes?season=' . $sName . '"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $sName . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/title/tt' . $this->id . '/episodes?season=' . $sName . '"' . ($target ? ' target="' . $target . '"' : '') . '>' . $sName . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -1042,23 +1042,23 @@ class IMDBClient
     }
 
     /**
-     * @param bool $bForceLocal Try to return the original name of the movie.
+     * @param bool $forceLocal Try to return the original name of the movie.
      *
      * @return string The title of the movie or $notFound.
      */
-    public function getTitle($bForceLocal = false)
+    public function getTitle($forceLocal = false)
     {
-        if (true === $this->isReady) {
-            if (true === $bForceLocal) {
+        if ($this->isReady === true) {
+            if ($forceLocal === true) {
                 $match = $this->matchRegex($this->source, static::IMDB_TITLE_ORIG, 1);
-                if (false !== $match && "" !== $match) {
+                if ($match !== false && $match !== "") {
                     return $this->cleanString($match);
                 }
             }
 
             $match = $this->matchRegex($this->source, static::IMDB_TITLE, 1);
             $match = preg_replace('~\(\d{4}\)$~Ui', '', $match);
-            if (false !== $match && "" !== $match) {
+            if ($match !== false && $match !== "") {
                 return $this->cleanString($match);
             }
         }
@@ -1067,16 +1067,16 @@ class IMDBClient
     }
 
     /**
-     * @param bool $bEmbed Link to player directly?
+     * @param bool $embed Link to player directly?
      *
      * @return string The URL to the trailer of the movie or $notFound.
      */
-    public function getTrailerAsUrl($bEmbed = false)
+    public function getTrailerAsUrl($embed = false)
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_TRAILER, 1);
-            if (false !== $match) {
-                $url = 'http://www.imdb.com/video/imdb/' . $match . '/' . ($bEmbed ? 'player' : '');
+            if ($match !== false) {
+                $url = 'http://www.imdb.com/video/imdb/' . $match . '/' . ($embed ? 'player' : '');
 
                 return $this->cleanString($url);
             }
@@ -1090,7 +1090,7 @@ class IMDBClient
      */
     public function getUrl()
     {
-        if (true === $this->isReady) {
+        if ($this->isReady === true) {
             return $this->cleanString(str_replace('combined', '', $this->url));
         }
 
@@ -1143,18 +1143,18 @@ class IMDBClient
     }
 
     /**
-     * @param string $sTarget Add a target to the links?
+     * @param string $target Add a target to the links?
      *
      * @return string A list with the linked writers or $notFound.
      */
-    public function getWriterAsUrl($sTarget = '')
+    public function getWriterAsUrl($target = '')
     {
         if (true === $this->isReady) {
             $match = $this->matchRegex($this->source, static::IMDB_WRITER, 1);
             $match = $this->matchRegex($match, static::IMDB_NAME);
             if (count($match[2])) {
                 foreach ($match[2] as $i => $sName) {
-                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($sTarget ? ' target="' . $sTarget . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
+                    $result[] = '<a href="http://www.imdb.com/name/' . $this->cleanString($match[1][$i]) . '/"' . ($target ? ' target="' . $target . '"' : '') . '>' . $this->cleanString($sName) . '</a>';
                 }
 
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
@@ -1283,7 +1283,7 @@ class IMDBClient
             }
 
             if ($more) {
-                $result[] = '…';
+                $result[] = '...';
             }
 
             return $result;
@@ -1351,7 +1351,7 @@ class IMDBClient
         list($short) = explode("\n", wordwrap($text, $length - 1));
 
         if (substr($short, -1) !== '.') {
-            return $short . '…';
+            return $short . '...';
         }
 
         return $short;

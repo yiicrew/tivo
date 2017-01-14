@@ -95,12 +95,13 @@ class MovieController extends Controller
         $movie->plot = $m->getPlot();
         $movie->runtime = (int) $m->getRuntime();
         $movie->poster = $m->getPoster('thumb');
+        $movie->release_date = $m->getReleaseDate();
         $movie->status = Movie::STATUS_ACTIVE;
         
         if ($movie->save()) {
             echo $movie->title . PHP_EOL;
             echo $movie->runtime . ' min' . PHP_EOL;
-            echo "============ Saved!" . PHP_EOL;
+            echo '============ Saved!' . PHP_EOL;
         } else {
             print_r($movie->errors);
             echo PHP_EOL;

@@ -16,8 +16,11 @@ class MovieController extends Controller
 
     public function actionView($title)
     {
-        $id = preg_match('/(\d+)$/', $title);
+        preg_match('/(\d+)$/', $title, $match);
+        $id = (int) $match[0];
         $movie = Movie::findOne($id);
+        $movie->views += 1;
+        $movie->save();
         return $this->render('view', [
             'movie' => $movie,
         ]);
