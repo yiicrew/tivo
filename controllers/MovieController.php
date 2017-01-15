@@ -2,25 +2,22 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 use app\models\Movie;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class MovieController extends Controller
 {
     public $layout = 'column2';
 
-    public function actionView($title)
+    public function actionView($title, $id)
     {
-        preg_match('/(\d+)$/', $title, $match);
-        $id = (int) $match[0];
         $movie = Movie::findOne($id);
-        $movie->views += 1;
-        $movie->save();
+        if ($movie === null) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $movie->updateCounters(['views' => 1]);
+
         return $this->render('view', [
             'movie' => $movie,
         ]);

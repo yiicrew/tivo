@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\IncrementBehavior;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -49,7 +50,7 @@ class Movie extends ActiveRecord
             [
                 'class' => TimestampBehavior::className(),
                 'value' => new Expression('NOW()'),
-            ],
+            ]
         ];
     }
 
@@ -119,7 +120,11 @@ class Movie extends ActiveRecord
 
     public function getViewUrl()
     {
-        $title = Inflector::slug($this->title . '-' . $this->id);
-        return Yii::$app->urlManager->createUrl(['movie/view', 'title' => $title]);
+        $title = Inflector::slug($this->title);
+        return Yii::$app->urlManager->createUrl([
+            'movie/view',
+            'title' => $title,
+            'id' => $this->id,
+        ]);
     }
 }

@@ -60,9 +60,9 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            // 'suffix' => '.html',
+            'suffix' => '.html',
             'rules' => [
-                'watch/<title>' => 'movie/view',
+                'watch/<title:(.*)>-<id:\d+>' => 'movie/view',
                 '<controller>/<action>' => '<controller>/<action>',
             ],
         ],
