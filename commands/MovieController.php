@@ -89,13 +89,15 @@ class MovieController extends Controller
 
     private function saveMovie($m)
     {
+        $releaseDate = preg_replace('/\((.*)\)$/', '', $m->getReleaseDate());
+
         $movie = new Movie;
         $movie->user_id = 1;
         $movie->title = $m->getTitle();
         $movie->plot = $m->getPlot();
         $movie->runtime = (int) $m->getRuntime();
         $movie->poster = $m->getPoster('thumb');
-        $movie->release_date = $m->getReleaseDate();
+        $movie->release_date = date('Y-m-d H:s:i', strtotime($releaseDate));
         $movie->status = Movie::STATUS_ACTIVE;
         
         if ($movie->save()) {

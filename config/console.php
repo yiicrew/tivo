@@ -16,7 +16,7 @@ $config = [
     ],
     'components' => [
         'cache' => [
-            'class' => 'yii\redis\Cache',
+            'class' => 'yii\caching\FileCache',
         ],
         'imdb' => [
             'class' => 'app\components\Imdb',
