@@ -127,4 +127,14 @@ class Movie extends ActiveRecord
             'id' => $this->id,
         ]);
     }
+
+    public function getCommentsUrl()
+    {
+        $title = Inflector::slug($this->title);
+        return Yii::$app->urlManager->createAbsoluteUrl([
+            'movie/view',
+            'title' => $title,
+            'id' => $this->id,
+        ]);
+    }
 }
