@@ -47,10 +47,10 @@ class SiteNavbar extends Widget
         }*/
 
         $items[] = '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'], 'post')
+                    . Html::beginForm(['/site/logout'], 'post', ['class' => 'search'])
                     . '<div class="form-group form-inline" style="margin:0;">'
-                    . Html::textInput('q', '', ['class' => 'form-control'])
-                    . Html::submitButton('Search', ['class' => 'btn btn-primary'])
+                    . Html::textInput('q', '', ['class' => 'form-control search__input'])
+                    . Html::submitButton('Search', ['class' => 'btn btn-primary search__button'])
                     . Html::endForm()
                     . '</div>'
                     . '</li>';

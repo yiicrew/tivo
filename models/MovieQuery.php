@@ -44,6 +44,6 @@ class MovieQuery extends \yii\db\ActiveQuery
 
     public function mostPopular()
     {
-        return $this->offset(24)->limit(12);
+        return $this->offset(25)->limit(12);
     }
 }

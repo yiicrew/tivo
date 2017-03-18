@@ -36,6 +36,10 @@ class MovieController extends Controller
             'http://www.imdb.com/title/tt1570728'
         ];
 
+        $urls = [
+            'http://www.imdb.com/title/tt4701640'
+        ];
+
         $this->fetchUrls($urls);
     }
 
@@ -96,7 +100,7 @@ class MovieController extends Controller
         $movie->title = $m->getTitle();
         $movie->plot = $m->getPlot();
         $movie->runtime = (int) $m->getRuntime();
-        $movie->poster = $m->getPoster('thumb');
+        $movie->poster = $m->getPoster('episodeThumb');
         $movie->release_date = date('Y-m-d H:s:i', strtotime($releaseDate));
         $movie->status = Movie::STATUS_ACTIVE;
         

@@ -278,7 +278,7 @@ class IMDBClient
             echo '<pre><b>Running cURL:</b> ' . $this->url . '</pre>';
         }
 
-        $curlInfo = $this->runCurl($this->url);
+        $curlInfo = $this->sendReq($this->url);
         $source = $curlInfo['contents'];
 
         if ($source === false) {
@@ -367,7 +367,7 @@ class IMDBClient
                 return $this->arrayOutput($this->arrayOutput, $this->separator, $this->notFound, $result);
             } else {
                 $fullAkas = sprintf('http://www.imdb.com/title/tt%s/releaseinfo', $this->id);
-                $curlInfo = static::runCurl($fullAkas);
+                $curlInfo = $this->sendReq($fullAkas);
                 $source = $curlInfo['contents'];
 
                 if (false === $source) {
@@ -898,6 +898,10 @@ class IMDBClient
                     $match = substr($match, 0, strpos($match, '._')) . '._V1_UX182_CR0,0,182,268_AL_.jpg';
                 }
 
+                if (strtolower($size) === 'episodeThumb' && strstr($match, '._') !== false) {
+                    $match = substr($match, 0, strpos($match, '._')) . '._V1_UY268_CR132,0,182,268_AL_.jpg';
+                }
+
                 if ($download === false) {
                     return $this->cleanString($match);
                 } else {
@@ -1363,7 +1367,7 @@ class IMDBClient
      *
      * @return bool|mixed Array on success, false on failure.
      */
-    public function runCurl($url, $download = false)
+    public function sendReq($url, $download = false)
     {
         $curl = curl_init($url);
         curl_setopt_array($curl, [
@@ -1417,7 +1421,7 @@ class IMDBClient
             return $this->posterDirectory . $id . '.jpg';
         }
 
-        $curlInfo = $this->runCurl($url, true);
+        $curlInfo = $this->sendReq($url, true);
         $data = $curlInfo['contents'];
         if ($data === false) {
             return $this->posterDirectory . 'not-found.jpg';

@@ -47,26 +47,14 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-/*        'cassandra' => [
-            'class' => '\beliy\cassandra\Connection',
-            'keyspace' => '',
-            'servers' => ['127.0.0.1:9042'],
-        ],*/
-/*        'redis' => [
-            'class' => 'yii\redis\Connection',
-            'hostname' => '127.0.0.1',
-            'port' => 6379,
-        ],*/
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            // 'suffix' => '.html',
             'rules' => [
                 'watch/<title:(.*)>-<id:\d+>' => 'movie/view',
                 '<controller>/<action>' => '<controller>/<action>',
             ],
-        ],
-        
+        ]
     ],
     'params' => $params,
 ];
